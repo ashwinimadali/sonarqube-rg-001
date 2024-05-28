@@ -1,10 +1,4 @@
-provider "null" {}
 
-resource "null_resource" "download_helm_chart" {
-  provisioner "local-exec" {
-    command = "helm pull stable/sonarqube --version 4.0.1"
-  }
-}
 
 resource "azurerm_resource_group" "sonarqube_rg" {
   name     = "sonarqube-rg"
@@ -41,27 +35,3 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-
-provider "helm" {
-  kubernetes {
-    config_path = "~/.kube/config"
-  }
-}
-
-
-resource "helm_release" "sonarqube_new" {
-  name       = "sq-new-release"
-  chart      = "stable/sonarqube"
-  version    = "4.0.1"  # Specify the version of the chart
-  namespace  = "default"
-
-  set {
-    name  = "service.type"
-    value = "LoadBalancer"  # Expose SonarQube service as LoadBalancer
-  }
-
-  set {
-    name  = "service.port"
-    value = "9000"  # Expose SonarQube on port 9000
-  }
-}
